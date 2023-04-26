@@ -74,7 +74,8 @@ Purchase_Item
         Wait Until Page Contains                Checkout: Overview
         Page Should Contain                     ${itemName}
         Page Should Contain                     ${itemPrice}
-        Element should contain                  xpath=//*[@id="checkout_summary_container"]/div/div[2]/div[8]       Total: $8.63
+        Tax_Calculator      ${itemPrice}
+        Element should contain                  xpath=//*[@id="checkout_summary_container"]/div/div[2]/div[8]       Total: $${result}
 
         Click Button        Finish
         Sleep   1
@@ -84,3 +85,13 @@ Purchase_Item
 
         Click Button        Back Home
         Sleep   1
+
+Tax_Calculator
+        [Arguments]                     ${itemprice}
+        ${itemPrice}=   set variable    ${itemprice}
+        ${itemPrice}=       remove string       ${itemPrice}        $
+        ${itemPrice}=       Convert To Number	   ${itemPrice}
+        ${result}=      Evaluate      (${itemPrice}*8/100)
+        ${result}=      Convert To Number	  ${result}     2
+        ${result}=      Evaluate      ${itemPrice} + ${result}
+        set test variable       ${result}
